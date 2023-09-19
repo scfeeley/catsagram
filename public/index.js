@@ -23,9 +23,26 @@ window.onload = (event => {
                 img.setAttribute("src", data[0]["url"]);
                 img.setAttribute("class", "cat-pic");
                 img.setAttribute("id", "c1");
+                localStorage.setItem("imgUrl", data[0]["url"] );
             });
     }
-    getCatImg();
+
+    //Check to see if the user was previously on the page and restore settings
+    let score = 0;
+
+    if (localStorage.getItem("imgUrl")) {
+        let imgUrl = localStorage.getItem("imgUrl");
+        img.setAttribute("src", imgUrl);
+        img.setAttribute("class", "cat-pic");
+        img.setAttribute("id", "c1");
+    }else{
+        getCatImg();
+    }
+
+    if(localStorage.getItem("score")){
+        score = parseInt(localStorage.getItem("score"));
+    }
+
 
     //Interctions with Images 
     let interactions = document.createElement("div");
@@ -40,9 +57,6 @@ window.onload = (event => {
     let scores = document.createElement("div");
     scores.setAttribute("id", "score-cont");
     interactions.appendChild(scores);
-
-    let score = 0;
-    let comments =[];
 
     let popScore = document.createElement("div");
     popScore.innerText = "Popularity Score: " + score;
@@ -82,11 +96,22 @@ window.onload = (event => {
     form.appendChild(sub);
     interactions.appendChild(form);
 
+    
+    let comments = {};
     let commentBox = document.createElement("ul");
     commentBox.innerText = "Comments";
     commentBox.setAttribute("id", "comments");
     interactions.appendChild(commentBox);
     let nextCommId = 0;
+
+    //Check to see if comments were added already 
+    if (localStorage.getItem("comments")) {
+        comments = localStorage.getItem("comments");
+        comments = JSON.parse(comments);
+        for (let key in comments) {
+            updateComments(comments[key], key);
+        }
+    }
 
     //Request new cat, reset all buttons and comments
     newBtn.addEventListener("click", event => {
@@ -96,6 +121,8 @@ window.onload = (event => {
         let listItems = document.querySelectorAll(".comm");
         listItems.forEach(ele => ele.remove());
         inp.value = "";
+        comments = {};
+        localStorage.setItem("comments", JSON.stringify(comments));
     })
 
     //Up vote cat
@@ -120,15 +147,21 @@ window.onload = (event => {
     //Update the current score
     function setScore() {
         popScore.innerText = "Popularity Score: " + score;
+        localStorage.setItem("score", score.toString())
     }
 
     //Update Comments
-    function updateComments(c1){
+    function updateComments(c1, id){
         let li = document.createElement("li");
         li.setAttribute("class", "comm");
         li.innerText = c1;
-        li.setAttribute("id", getCommID());
+        if(!id){
+            id = getCommID();
+            comments[id] = c1;
+        }
+        li.setAttribute("id", id);
         commentBox.appendChild(li);
+        localStorage.setItem("comments", JSON.stringify(comments));
     }
     
     //get comment ID
