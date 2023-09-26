@@ -1,3 +1,6 @@
+See Screen Shot of Catsagram to preview what the site looks like. 
+
+
 # Catstagram
 
 In this practice, you'll be building a multi-day project called Catstagram!
@@ -26,3 +29,4 @@ This project will be a 3 day project.
 1. Fetch a new cat image on page load and display it
 2. Add interactivity to the page with buttons and forms
 3. Store the application state on the client
+
